@@ -47,7 +47,6 @@ class Interface:
         url_forecast = f"https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={Api_key}&units={unity}&lang={language}"
         response_forecast = requests.get(url_forecast)
         forecast_response = response_forecast.json()
-        print(response)
 
         def kelvin_to_Celsius(kelvin):
             celsius = kelvin - 273
