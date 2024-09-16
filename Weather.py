@@ -8,6 +8,9 @@ class Interface:
         self.search_frame.pack()
         self.search_frame.configure(bg="#306BA9")
 
+        self.logo = PhotoImage(file='images\\logo.png')
+        root.iconphoto(True, self.logo)
+
         weather_label = Label(self.search_frame, bg="#306BA9", text="Weather App", font=("Gulim",30), width=11,height=2)
         weather_label.pack(pady=30)
 
@@ -37,13 +40,14 @@ class Interface:
 
         if response['cod'] == '404':
             self.city_not_found()
-            return  # Para sair da função se a cidade não for encontrada
+            return
 
         unity = "metric" 
         language = "en"
         url_forecast = f"https://api.openweathermap.org/data/2.5/forecast?q={city}&appid={Api_key}&units={unity}&lang={language}"
         response_forecast = requests.get(url_forecast)
         forecast_response = response_forecast.json()
+        print(response)
 
         def kelvin_to_Celsius(kelvin):
             celsius = kelvin - 273
@@ -58,17 +62,16 @@ class Interface:
         description = response['weather'][0]['description']
         humidity = response['main']['humidity']
         wind_speed = response['wind']['speed']
+        weather = response['weather'][0]['main']
         previsoes_filtradas = []
 
         for forecast in forecast_response['list']:
             data_hora = forecast['dt_txt']
-            hora = data_hora.split()[1]  # Pega a hora no formato "HH:MM:SS"
+            hora = data_hora.split()[1]
             
-            # Verifica se a hora é 12:00:00 (meio-dia)
             if hora == "12:00:00":
                 previsoes_filtradas.append(forecast)
 
-        # Atribuindo previsões a variáveis individuais para cada dia
         day1 = previsoes_filtradas[0]
         day2 = previsoes_filtradas[1]
         day3 = previsoes_filtradas[2]
@@ -92,8 +95,16 @@ class Interface:
         desc_day4 = day4['weather'][0]['description']
         desc_day5 = day5['weather'][0]['description']
 
-        clear_sky = PhotoImage(file='clearsky.png') 
-        
+        self.clear_sky = PhotoImage(file='images\\clear_sky.png')
+        self.broken_clouds = PhotoImage(file='images\\broken_clouds.png')
+        self.few_clouds = PhotoImage(file='images\\few_clouds.png')
+        self.mist = PhotoImage(file='images\\mist.png')
+        self.rain = PhotoImage(file='images\\rain.png')
+        self.scattered_clouds = PhotoImage(file='images\\scattered_clouds.png')
+        self.shower_rain = PhotoImage(file='images\\shower_rain.png')
+        self.snow = PhotoImage(file='images\\snow.png')
+        self.thunderstorm = PhotoImage(file='images\\thunderstorm.png')
+
 
         change_city_button = Button(self.main_frame, text="Change city", bg="#306BA9", fg="White", font=("Arial",10), command= self.change_city)
         change_city_button.pack(side= TOP, padx=200)
@@ -102,9 +113,28 @@ class Interface:
         City_label.pack(pady=20)
         temp_label = Label(self.main_frame, text= "%.2fºC" % celsius, font=("Arial", 40), bg="#306BA9", fg="White") 
         temp_label.pack()
-        if (description == 'clear sky'):
-            clear = Label(self.main_frame, image=clear_sky)
-            clear.pack(side=LEFT)
+        if weather == 'Clear':
+            clear_sky_label = Label(self.main_frame, image=self.clear_sky, width=50, height=50, bg="#306BA9")
+            clear_sky_label.pack(pady=10)
+        if weather == 'Clouds':
+            clear_sky_label = Label(self.main_frame, image=self.few_clouds, width=50, height=50, bg="#306BA9")
+            clear_sky_label.pack(pady=10)
+        if weather == 'Mist':
+            clear_sky_label = Label(self.main_frame, image=self.mist, width=50, height=50, bg="#306BA9")
+            clear_sky_label.pack(pady=10)
+        if weather == 'Rain':
+            clear_sky_label = Label(self.main_frame, image=self.rain, width=50, height=50, bg="#306BA9")
+            clear_sky_label.pack(pady=10)
+        if weather == 'Drizzle':
+            clear_sky_label = Label(self.main_frame, image=self.shower_rain, width=50, height=50, bg="#306BA9")
+            clear_sky_label.pack(pady=10)
+        if weather == 'Snow':
+            clear_sky_label = Label(self.main_frame, image=self.snow, width=50, height=50, bg="#306BA9")
+            clear_sky_label.pack(pady=10)
+        if weather == 'Thunderstorm':
+            clear_sky_label = Label(self.main_frame, image=self.thunderstorm, width=50, height=50, bg="#306BA9")
+            clear_sky_label.pack(pady=10)
+
 
         feels_like_label = Label(self.main_frame, text="Feels like: %.2fºC" % feels_like_celsius, bg="#306BA9", fg="white", font=("Arial", 10))
         feels_like_label.pack()
@@ -130,8 +160,10 @@ class Interface:
         day5.pack()
 
     def change_city(self):
-        self.main_frame.pack_forget()
-        self.error_frame.pack_forget()
+        if hasattr(self, 'error_frame'):
+            self.error_frame.pack_forget()
+        if hasattr(self, 'main_frame'):
+            self.main_frame.pack_forget()
         self.search_frame.pack()
 
     def city_not_found(self):
@@ -145,7 +177,6 @@ class Interface:
         
         try_again_button = Button(self.error_frame, text="Try again", bg="#306BA9", fg="white", font=("Arial", 15), command=self.change_city)
         try_again_button.pack(pady=20)
-
 
 root = Tk()
 App = Interface(root)
