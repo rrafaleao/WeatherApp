@@ -159,10 +159,7 @@ class Interface:
         day5.pack()
 
     def change_city(self):
-        if hasattr(self, 'error_frame'):
-            self.error_frame.pack_forget()
-        if hasattr(self, 'main_frame'):
-            self.main_frame.pack_forget()
+        self.main_frame.pack_forget()
         self.search_frame.pack()
 
     def city_not_found(self):
@@ -170,12 +167,16 @@ class Interface:
         self.error_frame = Frame(root)
         self.error_frame.pack()
         self.error_frame.configure(bg="#306BA9")
-        
+
         error_label = Label(self.error_frame, text="City not found!", font=("Arial", 20), bg="#306BA9", fg="white")
         error_label.pack(pady=20)
         
-        try_again_button = Button(self.error_frame, text="Try again", bg="#306BA9", fg="white", font=("Arial", 15), command=self.change_city)
+        try_again_button = Button(self.error_frame, text="Try again", bg="#306BA9", fg="white", font=("Arial", 15), command=self.change_error)
         try_again_button.pack(pady=20)
+
+    def change_error(self):
+        self.error_frame.pack_forget()
+        self.search_frame.pack()
 
 root = Tk()
 App = Interface(root)
